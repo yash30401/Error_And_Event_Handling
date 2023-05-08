@@ -8,7 +8,7 @@ import retrofit2.Response
 class PostRepository {
    private val postService=PostService
 
-    suspend fun getPosts():Response<posts>{
+    suspend fun getPosts():Response<List<posts>>{
         return postService.postsApi.getPosts()
     }
 }

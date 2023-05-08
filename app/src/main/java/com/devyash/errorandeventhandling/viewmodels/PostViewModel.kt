@@ -13,37 +13,39 @@ import kotlinx.coroutines.launch
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val postRepository: PostRepository
-    private val _networkResult: MutableLiveData<NetworkResult<posts>> = MutableLiveData()
-    val networkResult: LiveData<NetworkResult<posts>>
+    private val postRepository: PostRepository= PostRepository()
+    private val _networkResult: MutableLiveData<NetworkResult<List<posts>>> = MutableLiveData()
+    val networkResult: LiveData<NetworkResult<List<posts>>>get() = _networkResult
 
-    init {
-        postRepository = PostRepository()
-        networkResult = _networkResult
-        viewModelScope.launch(Dispatchers.IO) {
-        }
-    }
 
-    fun getPosts()=viewModelScope.launch(Dispatchers.IO){
+    fun getPosts()=viewModelScope.launch{
         getPostsSafeCall()
     }
     private suspend fun getPostsSafeCall(){
         _networkResult.value = NetworkResult.Loading()
+
         if(hasInternetConnection()){
             try{
                 val response = postRepository.getPosts()
                 if(response.code()==200){
-                    _networkResult.value = NetworkResult.Success(response.body()!!)
+                    val posts = response.body()
+                    if(posts!=null && posts.isNotEmpty()) {
+                        _networkResult.value = NetworkResult.Success(posts)
+                    }else{
+                        _networkResult.value = NetworkResult.Error("Empty or null response")
+                    }
+
                 } else {
-                    _networkResult.value = NetworkResult.Error(null,response.message())
+                    _networkResult.value = NetworkResult.Error(response.message())
                 }
             }catch (e:Exception){
-                _networkResult.value = NetworkResult.Error(null,e.message)
+                _networkResult.value = NetworkResult.Error(e.message)
             }
         }else{
-            _networkResult.value = NetworkResult.Error(null,"No Internet")
+            _networkResult.value = NetworkResult.Error("No Internet")
         }
     }
+
 
     private fun hasInternetConnection(): Boolean {
         return true

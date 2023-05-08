@@ -1,3 +1,8 @@
 package com.devyash.errorandeventhandling.models
 
-class posts : ArrayList<postsItem>()
+import com.google.gson.annotations.SerializedName
+
+data class posts(
+    @SerializedName("postItems")
+    val postItems:List<postsItem>
+)
