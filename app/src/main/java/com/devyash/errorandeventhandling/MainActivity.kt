@@ -3,18 +3,15 @@ package com.devyash.errorandeventhandling
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.devyash.errorandeventhandling.databinding.ActivityMainBinding
-import com.devyash.errorandeventhandling.models.postsItem
 import com.devyash.errorandeventhandling.other.NetworkResult
 import com.devyash.errorandeventhandling.viewmodels.PostViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,10 +38,14 @@ class MainActivity : AppCompatActivity() {
                 viewModel.networkResult.observe(this@MainActivity, Observer { response ->
                     when (response) {
                         is NetworkResult.Success -> {
-                            response.data?.let {
+                            response.data?.let {posts->
+                                var res=""
+                                posts.forEach {
+                                       res += it.title+"\n\n"
 
+                                   }
                                 GlobalScope.launch(Dispatchers.Main) {
-                                    binding.tvResult.text =it[0].postItems[0].title.toString()
+                                    binding.tvResult.text = res
                                 }
                             }
 

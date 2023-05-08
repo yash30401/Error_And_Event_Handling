@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.devyash.errorandeventhandling.models.posts
 import com.devyash.errorandeventhandling.other.NetworkResult
 import com.devyash.errorandeventhandling.repositories.PostRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val postRepository: PostRepository= PostRepository()
-    private val _networkResult: MutableLiveData<NetworkResult<List<posts>>> = MutableLiveData()
-    val networkResult: LiveData<NetworkResult<List<posts>>>get() = _networkResult
+    private val _networkResult: MutableLiveData<NetworkResult<posts>> = MutableLiveData()
+    val networkResult: LiveData<NetworkResult<posts>>get() = _networkResult
 
 
     fun getPosts()=viewModelScope.launch{
