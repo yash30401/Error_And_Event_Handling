@@ -54,3 +54,37 @@ private suspend fun getPostsSafeCall(){
         }
     }
 ```
+
+#### And this is how we will handle it in the main activity.
+``` kotlin
+private fun requestApiData() {
+        lifecycleScope.launch {
+            viewModel.getPosts()
+            lifecycleScope.launch {
+                viewModel.networkResult.observe(this@MainActivity, Observer { response ->
+                    when (response) {
+                        is NetworkResult.Success -> {
+                            response.data?.let {posts->
+                                var res=""
+                                posts.forEach {
+                                       res += it.title+"\n\n"
+
+                                   }
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    binding.tvResult.text = res
+                                }
+                            }
+
+                        }
+                        is NetworkResult.Error -> {
+                            Log.d("RESPONSECALL", response.message.toString())
+                        }
+                        is NetworkResult.Loading -> {
+                            Log.d("RESPONSECALL", response.message.toString())
+                        }
+                    }
+                })
+            }
+        }
+    }
+```
