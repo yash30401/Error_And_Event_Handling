@@ -6,7 +6,10 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.devyash.errorandeventhandling.adapter.PostsAdapter
 import com.devyash.errorandeventhandling.databinding.ActivityMainBinding
+import com.devyash.errorandeventhandling.models.postsItem
 import com.devyash.errorandeventhandling.other.NetworkResult
 import com.devyash.errorandeventhandling.viewmodels.PostViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     val binding get() = _binding!!
     private val viewModel: PostViewModel by viewModels()
+    private lateinit var postsAdapter: PostsAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -39,13 +43,13 @@ class MainActivity : AppCompatActivity() {
                     when (response) {
                         is NetworkResult.Success -> {
                             response.data?.let {posts->
-                                var res=""
-                                posts.forEach {
-                                       res += it.title+"\n\n"
-
-                                   }
+                                val posItemList:List<postsItem> = posts.toList()
                                 GlobalScope.launch(Dispatchers.Main) {
-                                    binding.tvResult.text = res
+                                    binding.recylerview.apply {
+                                        postsAdapter = PostsAdapter(posItemList)
+                                        adapter = postsAdapter
+                                        layoutManager = LinearLayoutManager(this@MainActivity)
+                                    }
                                 }
                             }
 
