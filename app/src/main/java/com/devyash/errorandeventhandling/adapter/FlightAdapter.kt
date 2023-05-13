@@ -12,7 +12,7 @@ import com.devyash.errorandeventhandling.databinding.FlightItemLayoutBinding
 import com.devyash.errorandeventhandling.models.passenger.Data
 import com.devyash.errorandeventhandling.paging.FlightPagingSource
 
-class FlightAdapter(val flightData:List<Data>):PagingDataAdapter<Data,FlightAdapter.FlightViewHolder>(COMPARATOR) {
+class FlightAdapter():PagingDataAdapter<Data,FlightAdapter.FlightViewHolder>(COMPARATOR) {
 
     inner class FlightViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         var binding = FlightItemLayoutBinding.bind(itemView)
@@ -24,20 +24,16 @@ class FlightAdapter(val flightData:List<Data>):PagingDataAdapter<Data,FlightAdap
         return viewHolder
     }
 
-    override fun getItemCount(): Int {
-        return flightData.size
-    }
-
     override fun onBindViewHolder(holder: FlightViewHolder, position: Int) {
-        val data = flightData[position]
+        val data = getItem(position)
 
-        holder.binding.personId.text = data._id
-        holder.binding.personName.text = data.name
-        holder.binding.personTrips.text = data.trips.toString()
+        holder.binding.personId.text = data?._id.toString()
+        holder.binding.personName.text = data?.name.toString()
+        holder.binding.personTrips.text = data?.trips.toString()
 
-        holder.binding.flightName.text = data.airline.get(0).name
-        holder.binding.flightCountry.text = data.airline.get(0).country
-        holder.binding.flightSlogan.text = data.airline.get(0).slogan
+        holder.binding.flightName.text = data?.airline?.get(0)?.name.toString()
+        holder.binding.flightCountry.text = data?.airline?.get(0)?.country.toString()
+        holder.binding.flightSlogan.text = data?.airline?.get(0)?.slogan.toString()
 
     }
 
