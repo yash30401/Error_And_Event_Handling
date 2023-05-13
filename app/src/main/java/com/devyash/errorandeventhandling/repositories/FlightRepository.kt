@@ -14,4 +14,5 @@ class FlightRepository {
         config = PagingConfig(20, maxSize = 100),
         pagingSourceFactory = {FlightPagingSource(flightService.flightApi)}
     ).flow
+
 }
