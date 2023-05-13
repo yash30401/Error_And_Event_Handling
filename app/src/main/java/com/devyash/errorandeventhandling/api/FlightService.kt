@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 object FlightService {
-    private val flightApi:FlightApi
+     val flightApi:FlightApi
 
     init {
         val retrofit =  Retrofit.Builder()

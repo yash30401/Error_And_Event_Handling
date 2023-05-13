@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object PostsService {
-    private val postsApi:PostsApi
+     val postsApi:PostsApi
     init {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://jsonplaceholder.typicode.com")
