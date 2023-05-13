@@ -1,5 +1,6 @@
 package com.devyash.errorandeventhandling
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         requestApiData()
 
+        binding.btnFlightDetails.setOnClickListener {
+            startActivity(Intent(this,FlightDetails::class.java))
+        }
 
     }
 
