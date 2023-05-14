@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.errorandeventhandling.adapter.FlightAdapter
+import com.devyash.errorandeventhandling.adapter.LoaderAdapter
 import com.devyash.errorandeventhandling.databinding.ActivityFlightDetailsBinding
 import com.devyash.errorandeventhandling.other.NetworkResult
 import com.devyash.errorandeventhandling.viewmodels.FlightViewModel
@@ -26,7 +27,10 @@ class FlightDetails : AppCompatActivity() {
 
         binding.fightRecylerView.apply {
             flightAdapter = FlightAdapter()
-            adapter= flightAdapter
+            adapter= flightAdapter.withLoadStateHeaderAndFooter(
+                header = LoaderAdapter(),
+                footer = LoaderAdapter()
+            )
             layoutManager  = LinearLayoutManager(this@FlightDetails)
         }
 
