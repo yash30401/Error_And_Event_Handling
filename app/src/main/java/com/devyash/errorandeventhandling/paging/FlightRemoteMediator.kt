@@ -13,9 +13,7 @@ import com.devyash.errorandeventhandling.db.FlightRemoteKeys
 import com.devyash.errorandeventhandling.models.passenger.Data
 
 @ExperimentalPagingApi
-class FlightRemoteMediator(context: Context) : RemoteMediator<Int, Data>() {
-    private val flightaApi = FlightService.flightApi
-    private val flightDatabase = FlightDatabase.getDatabase(context)
+class FlightRemoteMediator(private val flightApi: FlightApi, private val flightDatabase: FlightDatabase) : RemoteMediator<Int, Data>() {
 
     private val flightDao = flightDatabase.flightDao()
     private val flightRemoteKeysDao = flightDatabase.remoteKeysDao()
@@ -52,7 +50,7 @@ class FlightRemoteMediator(context: Context) : RemoteMediator<Int, Data>() {
                 }
             }
 
-            val response = flightaApi.getPassengersData(currentPage)
+            val response = flightApi.getPassengersData(currentPage)
             val endOfPaginationReached = response.body()?.totalPages == currentPage
 
             val prevPage = if (currentPage == 1) null else currentPage - 1

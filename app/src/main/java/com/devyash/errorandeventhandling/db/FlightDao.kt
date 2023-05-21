@@ -12,11 +12,11 @@ import com.devyash.errorandeventhandling.models.passenger.Data
 interface FlightDao {
 
     @Query("SELECT * FROM flight_table")
-    suspend fun getFlights():PagingSource<Int,Data>
+    fun getFlights():PagingSource<Int,Data>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addFlight(flight:List<Data>)
+    fun addFlight(flight:List<Data>)
 
     @Query("DELETE from flight_table")
-    suspend fun deleteFlight()
+    fun deleteFlight()
 }

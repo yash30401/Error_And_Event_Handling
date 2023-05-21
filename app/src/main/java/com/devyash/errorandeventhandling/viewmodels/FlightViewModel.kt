@@ -8,6 +8,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.devyash.errorandeventhandling.api.FlightService
+import com.devyash.errorandeventhandling.db.FlightDatabase
 import com.devyash.errorandeventhandling.models.passenger.Data
 import com.devyash.errorandeventhandling.other.NetworkResult
 import com.devyash.errorandeventhandling.repositories.FlightRepository
@@ -17,7 +19,9 @@ import java.lang.Exception
 
 class FlightViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val flightRepository = FlightRepository()
+    private val flightDatabase = FlightDatabase.getDatabase(application)
+
+    private val flightRepository = FlightRepository(flightDatabase)
     private val _networkResult: MutableLiveData<NetworkResult<LiveData<PagingData<Data>>>> = MutableLiveData()
     val networkResult: LiveData<NetworkResult<LiveData<PagingData<Data>>>>
         get() = _networkResult
