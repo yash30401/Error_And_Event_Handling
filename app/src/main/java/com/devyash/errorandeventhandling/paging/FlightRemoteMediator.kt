@@ -28,8 +28,20 @@ class FlightRemoteMediator(context: Context) : RemoteMediator<Int, Data>() {
         return try {
 
             val currentPage = when (loadType) {
-                LoadType.REFRESH -> {}
-                LoadType.PREPEND -> {}
+                LoadType.REFRESH -> {
+                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                    remoteKeys?.nextKey?.minus(1) ?: 1
+                }
+
+                LoadType.PREPEND -> {
+                    val remoteKeys = getRemoteKeyForFirstItem(state)
+                    val prevPage = remoteKeys?.prevKey
+                        ?: return MediatorResult.Success(
+                            endOfPaginationReached = remoteKeys != null
+                        )
+                    prevPage
+                }
+
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
                     val nextPage = remoteKeys?.nextKey
@@ -47,6 +59,12 @@ class FlightRemoteMediator(context: Context) : RemoteMediator<Int, Data>() {
             val nextPage = if (endOfPaginationReached) null else currentPage + 1
 
             flightDatabase.withTransaction {
+
+                if (loadType == LoadType.REFRESH) {
+                    flightDao.deleteFlight()
+                    flightRemoteKeysDao.deleteAllRemoteKeys()
+                }
+
                 flightDao.addFlight(response.body()?.data!!)
                 val keys = response.body()?.data?.map { flight ->
                     FlightRemoteKeys(
@@ -62,6 +80,23 @@ class FlightRemoteMediator(context: Context) : RemoteMediator<Int, Data>() {
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(
+        state: PagingState<Int, Data>
+    ): FlightRemoteKeys? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?._id?.let { id ->
+                flightRemoteKeysDao.getRemoteKeys(id = id)
+            }
+        }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Data>): FlightRemoteKeys? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
+            ?.let { flight ->
+                flightRemoteKeysDao.getRemoteKeys(id = flight._id)
+            }
     }
 
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Data>): FlightRemoteKeys? {
